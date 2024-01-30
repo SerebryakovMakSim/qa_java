@@ -1,49 +1,46 @@
 package com.example;
 
-import org.junit.Assert;
-import org.junit.Before;
+import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.List;
-
 @RunWith(MockitoJUnitRunner.class)
-public class FelineTest {
+public class FelineTest extends TestCase {
+private final String expected = "Кошачьи";
+private static final int EXPECTED_KITTENS_COUNT_FOR_MOCK = 1;
+private int kittensCount = 5;
 
-    private Feline feline;
-    @Mock
-    Feline felineMock;
+@Spy
+private Feline feline;
 
-    @Before
-    public void createFeline() {
-        this.feline = new Feline();
-    }
+@Test
+public void testEatMeat() throws Exception {
+feline.eatMeat();
+Mockito.verify(feline, Mockito.times(1)).getFood("Хищник");
+}
+@Test
+    public void testGetFamily() {
+    String actual = feline.getFamily();
+    Mockito.verify(feline, Mockito.times(1)).getFamily();
 
-    @Test
-    public void checkEatMeat() throws Exception {
-        Mockito.when(felineMock.eatMeat()).thenReturn(List.of("Животные", "Птицы", "Рыба"));
-        Assert.assertEquals(felineMock.eatMeat(), feline.eatMeat());
-    }
+    assertEquals("Ожидаемое семейство не соответствует фактическому", expected, actual);
+}
+@Test
+public void testGetKittens() {
+    int actual = feline.getKittens();
+    Mockito.verify(feline).getKittens(EXPECTED_KITTENS_COUNT_FOR_MOCK);
 
-    @Test
-    public void checkGetFamily() {
-        Mockito.when(felineMock.getFamily()).thenReturn("Кошачьи");
-        Assert.assertEquals(felineMock.getFamily(), feline.getFamily());
-    }
+    assertEquals("Количество котят не соответствует ожидаемому", EXPECTED_KITTENS_COUNT_FOR_MOCK, actual);
+}
+@Test
+    public void tesTestGetKittens() {
+    int actual = feline.getKittens(kittensCount);
+    Mockito.verify(feline).getKittens(Mockito.anyInt());
 
-    @Test
-    public void checkGetKittens() {
-        Mockito.when(felineMock.getKittens()).thenReturn(1);
-        Assert.assertEquals(felineMock.getKittens(), feline.getKittens());
-    }
+    assertEquals("Количество котят не соответствует ожидаемому", kittensCount, actual);
+}
 
-    @Test
-    public void checkGetKittensCount() {
-        int kittenCount = Mockito.anyInt();
-        Mockito.when(felineMock.getKittens(kittenCount)).thenReturn(kittenCount);
-        Assert.assertEquals(felineMock.getKittens(kittenCount), feline.getKittens(kittenCount));
-    }
 }

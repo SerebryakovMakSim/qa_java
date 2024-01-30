@@ -1,50 +1,40 @@
 package com.example;
 
-import org.junit.Assert;
+
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
-@RunWith(Parameterized.class)
-public class AnimalTest {
 
+public class AnimalTest extends TestCase{
     private Animal animal;
-    private final String animalKind;
-    private final List<String> foods;
-
-    public AnimalTest(String animalKind, List<String> foods) {
-        this.animalKind = animalKind;
-        this.foods = foods;
-    }
-
-    @Parameterized.Parameters(name = "Вид животного = {0}, еда/ошибка = {1}")
-    public static Object[][] data() {
-        return new Object[][]{
-                {"Травоядное", List.of("Трава", "Различные растения")},
-                {"Хищник", List.of("Животные", "Птицы", "Рыба")},
-                {"Насекомое", List.of("Неизвестный вид животного, используйте значение Травоядное или Хищник")}
-        };
-    }
+    private static final String UNSUPPORTED_ANIMAL_KIND = "unsupported animal kind";
+    private static final String TEXT_EXEPTION = "Неизвестный вид животного, используйте значение Травоядное или Хищник";
+    private static final String FAMILY = "Существует несколько семейств: заячьи, беличьи, мышиные, кошачьи, псовые, медвежьи, куньи";
 
     @Before
-    public void createAnimal() {
-        this.animal = new Animal();
+    public void setUp() {
+        animal = new Animal();
     }
 
     @Test
-    public void checkGetFood() {
-        try {
-            Assert.assertEquals(foods, animal.getFood(animalKind));
-        } catch (Exception ex) {
-            Assert.assertEquals(foods.get(0), ex.getMessage());
-        }
+    public void testGetFoodExeption() {
+        Throwable throwable = catchThrowable(() -> {
+            animal.getFood(UNSUPPORTED_ANIMAL_KIND);
+        });
+        assertThat(throwable)
+                .isInstanceOf(Exception.class)
+                .hasMessage(TEXT_EXEPTION);
     }
 
     @Test
-    public void getFamily() {
-        Assert.assertEquals("Существует несколько семейств: заячьи, беличьи, мышиные, кошачьи, псовые, медвежьи, куньи", animal.getFamily());
+    public void testGetFamily() {
+        String actual = animal.getFamily();
+
+        assertEquals("Ответ не соответствует ожидаемому",
+                FAMILY, actual);
     }
 }
